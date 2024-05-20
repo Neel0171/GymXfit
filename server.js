@@ -17,7 +17,8 @@ const staffRoutes = require('./routes/staffRoutes');
 app.use('/staff',staffRoutes);
 
 
-
+//showing the port is listening
 app.listen(3000,()=>{
     console.log("listening on port 3000");
 })
+
