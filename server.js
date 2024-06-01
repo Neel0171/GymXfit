@@ -23,10 +23,11 @@ app.get('/',function (req, res) {
 
 //import router files
 const staffRoutes = require('./routes/staffRoutes');
+const memberRoutes = require('./routes/memberRoutes');
 
 //use routes
 app.use('/staff',localAuthMiddleware,staffRoutes);
-
+app.use('/member',localAuthMiddleware,memberRoutes);
 
 //showing the port is listening
 app.listen(3000,()=>{
