@@ -27,13 +27,20 @@ const memberSchema = new mongoose.Schema ({
     },
     gender:{
         type:String,
-        enum:['male','female','other'],
+        enum:['Male','Female','Other'],
         required:true 
     },
-    address:{
+    emergencyrelation:{
+        required:true,
+        enum:['MOTHER','FATHER','SON','DAUGHTER','BROTHER','SISTER','UNCLE','AUNTY','WIFE','HUSBAND','GRANDFATHER','GRANDMOTHER','GRANDCHILD','NEIGHBOUR','FRIEND'],
         type:String
+
     },
     emergencymobile:{
+        type:String
+    },
+    joiningdate:{
+        required:true,
         type:String
     },
     birthdate:{

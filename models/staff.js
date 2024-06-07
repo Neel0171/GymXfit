@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 //define model schema
+
+const rel = ['MOTHER','FATHER','SON','DAUGHTER','BROTHER','SISTER','UNCLE','AUNTY','WIFE','HUSBAND','GRANDFATHER','GRANDMOTHER','GRANDCHILD','NEIGHBOUR','FRIEND'];
 const staffSchema = new mongoose.Schema ({
     firstname:{
         type:String,
@@ -27,11 +28,8 @@ const staffSchema = new mongoose.Schema ({
     },
     gender:{
         type:String,
-        enum:['male','female','other'],
+        enum:['Male','Female','Other'],
         required:true 
-    },
-    address:{
-        type:String
     },
     salary:{
         type:Number,
@@ -42,13 +40,17 @@ const staffSchema = new mongoose.Schema ({
         enum:['superadmin','manager','trainer'],
         required:true
     },
-    username:{
+    emergencyrelation:{
         required:true,
+        enum:rel,
         type:String
 
     },
-    password:{
+    joiningdate:{
         required:true,
+        type:String
+    },
+    leavingdate:{
         type:String
     },
     emergencymobile:{
@@ -67,41 +69,10 @@ const staffSchema = new mongoose.Schema ({
         type:String
     }
 
+
 })
 
 
-staffSchema.pre('save',async function(next){
-    const Staff = this;
-
-    //hash the password only if it has been modified (or is new)
-    if (!Staff.isModified('password')) return next();
-
-    try{
-        //hash password generation
-        const salt = await bcrypt.genSalt(10);
-
-        //hash password
-        const hashedpassword = await bcrypt.hash(Staff.password, salt);
-
-        //override plain password with hashedpassword
-        Staff.password = hashedpassword;
-
-        next();
-    }catch(err){
-        return next(err);
-    }
-})
-
-
-staffSchema.methods.comparePassword = async function(candidatePassword){
-    try{
-        //used bcrypt to compare the provided password with the hashed password
-        const isMatch = await bcrypt.compare(candidatePassword, this.password);
-        return isMatch;
-    }catch(err){
-        throw err;
-    }
-}
 
 //creating staff model 
 const staff = mongoose.model('staff', staffSchema);

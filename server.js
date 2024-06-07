@@ -1,7 +1,6 @@
 const express = require('express')
 const app = express();
 const db = require("./db");
-const passport = require("./auth");
 const bodyParser = require('body-parser');
 app.use(bodyParser.json())
 
@@ -14,9 +13,6 @@ const logRequest = (req,res,next)=>{
 app.use(logRequest);
 
 
-app.use(passport.initialize());
-const localAuthMiddleware = passport.authenticate('local',{session:false});
-
 app.get('/',function (req, res) {
     res.send('Hello World')
 })
@@ -24,10 +20,12 @@ app.get('/',function (req, res) {
 //import router files
 const staffRoutes = require('./routes/staffRoutes');
 const memberRoutes = require('./routes/memberRoutes');
+const addressRoutes = require('./routes/addressRoutes');
 
 //use routes
-app.use('/staff',localAuthMiddleware,staffRoutes);
-app.use('/member',localAuthMiddleware,memberRoutes);
+app.use('/staff',staffRoutes);
+app.use('/member',memberRoutes);
+app.use('/address',addressRoutes);
 
 //showing the port is listening
 app.listen(3000,()=>{
