@@ -1,9 +1,14 @@
 const express = require('express')
+const cors = require('cors');
 const app = express();
+
 const db = require("./db");
 const bodyParser = require('body-parser');
 app.use(bodyParser.json())
+ 
+const port = 3005;
 
+app.use(cors());
 
 //Middleware Function
 const logRequest = (req,res,next)=>{
@@ -11,6 +16,7 @@ const logRequest = (req,res,next)=>{
     next(); // move on next phase
 }
 app.use(logRequest);
+
 
 
 app.get('/',function (req, res) {
@@ -28,7 +34,7 @@ app.use('/member',memberRoutes);
 app.use('/address',addressRoutes);
 
 //showing the port is listening
-app.listen(3000,()=>{
-    console.log("listening on port 3000");
+app.listen(port,()=>{
+    console.log("listening on port 3005");
 })
 
