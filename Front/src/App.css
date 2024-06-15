@@ -42,11 +42,11 @@
   flex-wrap: nowrap;
 }
 
-#page-content-wrapper {
-  flex: 1;
-  overflow-x: hidden;
+.container-fluid {
+  padding: 20px;
 }
 
-.container-fluid {
+.content {
+  flex-grow: 1;
   padding: 20px;
 }

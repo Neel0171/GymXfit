@@ -1,22 +1,38 @@
 const mongoose = require('mongoose');
 //define model schema
 
-const rel = ['MOTHER','FATHER','SON','DAUGHTER','BROTHER','SISTER','UNCLE','AUNTY','WIFE','HUSBAND','GRANDFATHER','GRANDMOTHER','GRANDCHILD','NEIGHBOUR','FRIEND'];
+const rel =  [
+    'mother',
+    'father',
+    'son',
+    'daughter',
+    'brother',
+    'sister',
+    'uncle',
+    'aunty',
+    'wife',
+    'husband',
+    'grandfather',
+    'grandmother',
+    'grandchild',
+    'neighbour',
+    'friend'];
+
 const staffSchema = new mongoose.Schema ({
-    firstname:{
+    firstName:{
         type:String,
         required:true 
     },
-    lastname:{
+    lastName:{
         type:String,
         required:true 
     },
-    adharcard:{
+    aadhaarNumber:{
         type:String,
         required:true,
         unique:true 
     },
-    mobilenumber:{
+    mobileNumber:{
         type:String,
         required:true 
     },
@@ -28,7 +44,7 @@ const staffSchema = new mongoose.Schema ({
     },
     gender:{
         type:String,
-        enum:['Male','Female','Other'],
+        enum:['male','female','other'],
         required:true 
     },
     salary:{
@@ -37,23 +53,23 @@ const staffSchema = new mongoose.Schema ({
     },
     role:{
         type:String,
-        enum:['superadmin','manager','trainer'],
+        enum:['admin','trainer','super','receptionist'],
         required:true
     },
-    emergencyrelation:{
+    emergencyRelation:{
         required:true,
         enum:rel,
         type:String
 
     },
-    joiningdate:{
+    joiningDate:{
         required:true,
         type:String
     },
-    leavingdate:{
+    leavingDate:{
         type:String
     },
-    emergencymobile:{
+    emergencyMobile:{
         type:String
     },
     birthdate:{
@@ -65,7 +81,7 @@ const staffSchema = new mongoose.Schema ({
         enum:['morning','evening','fullday'],
         required:true
     },
-    bloodgroup:{
+    bloodGroup:{
         type:String
     }
 
