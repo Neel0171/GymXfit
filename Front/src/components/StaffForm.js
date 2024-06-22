@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect,  useCallback } from 'react';
 import Select from 'react-select';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import AddressModal from './AddressModal';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 function StaffForm() {
-
+    
+    const { id } = useParams(); // Get the staff ID from the URL
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -22,7 +25,15 @@ function StaffForm() {
         birthdate: '',
         shift: '',
         bloodGroup: '',
+        image:null,
     });
+
+    const navigate = useNavigate(); // useNavigate hook for navigation
+    const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    
+
+
     
     const shiftOptions = [
         { value: 'morning', label: 'Morning' },
@@ -30,31 +41,71 @@ function StaffForm() {
         { value: 'evening', label: 'Evening' },
     ];
 
+    useEffect(() => {
+        if (id) {
+          fetchStaffDetails();
+        }
+      }, [id]);
+    
+      const fetchStaffDetails = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3005/staff/${id}`);
+          setFormData(response.data);
+        } catch (error) {
+          console.error('Error fetching staff details:', error);
+        }
+      };
+    
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+        const { name, value, files } = e.target;
+        setFormData({
+          ...formData,
+          [name]: files ? files[0] : value,
+        });
+      };
 
     const handleSelectChange = (selectedOption, actionMeta) => {
         setFormData({ ...formData, [actionMeta.name]: selectedOption.value });
     };
 
-    const handleSubmit = async () => {
-        try {
-            const response = await fetch('http://localhost:3005/staff', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-            const result = await response.json();
-            console.log(result);
-        } catch (error) {
-            console.error('Error:', error);
-        }
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setFormData({ ...formData, image: file });
+
+        // Create a preview URL for the selected image
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreviewUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
     };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+          const data = new FormData();
+          for (const key in formData) {
+            data.append(key, formData[key]);
+          }
+    
+          const response = id
+        ? await axios.put(`http://localhost:3005/staff/${id}`, data)
+        : await axios.post('http://localhost:3005/staff', data);
+
+    
+        if (response.status === 200) {
+            alert('Data Entered Successfully');
+            navigate('/staffTable');
+          } else {
+            console.error('Failed to submit data');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+
+    
 
     const documentOptions = [
         { value: 'aadhar', label: 'Aadhar Card' },
@@ -102,6 +153,50 @@ function StaffForm() {
         { value: 'friend', label: 'Friend' }
     ];
 
+    const handleUploadFromDevice = () => {
+        document.getElementById('fileInput').click();
+        setIsPopupVisible(false);
+    };
+
+    const handleTakePicture = () => {
+        console.log("Take picture clicked");
+        setIsPopupVisible(false);
+    };
+
+    const handleOpenPopup = () => {
+        setIsPopupVisible(true);
+    };
+
+    const handleClosePopup = () => {
+        setIsPopupVisible(false);
+    };
+
+    const popupStyles = {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999
+    };
+
+    const popupContentStyles = {
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '10px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+    };
+
+    const buttonStyles = {
+        margin: '10px'
+    };
+
     return (
         <div className='container-fluid' >
             <div className="container">
@@ -116,15 +211,23 @@ function StaffForm() {
 
                 <hr />
 
+                
                 <div className="d-flex mb-3 align-items-center justify-content-between">
                     <div id="upload" className="me-auto position-relative">
-                        <img src="https://gymxfit.gymxfit.com/assets/images/profile.svg" alt="Profile" className="image" height="150px" />
-                        <button type="button" className="btn btn-primary d-inline-flex align-items-center position-absolute top-0 start-100 translate-middle badge border border-2 border-white rounded" style={{ padding: "5px" }}>
+                        <img src={imagePreviewUrl || "https://gymxfit.gymxfit.com/assets/images/profile.svg"} alt="Profile" className="image" height="150px" />
+                        <button type="button" className="btn btn-primary d-inline-flex align-items-center position-absolute top-0 start-100 translate-middle badge border border-2 border-white rounded" style={{ padding: "5px" }} onClick={handleOpenPopup}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                                 <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
                             </svg>
                         </button>
+                        <input 
+                            type="file" 
+                            id="fileInput" 
+                            name="image" 
+                            style={{ display: 'none' }} 
+                            onChange={handleFileChange} 
+                        />
                     </div>
                     <div>
                         <h5>Notification Setting</h5>
@@ -385,8 +488,20 @@ function StaffForm() {
                 </div>
 
             </form>
+		
 
             <AddressModal />
+
+            {isPopupVisible && (
+                <div style={popupStyles}>
+                    <div style={popupContentStyles}>
+                        <h2>Upload Profile Picture</h2>
+                        <button style={buttonStyles} className="btn btn-primary" onClick={handleUploadFromDevice}>Upload from Device</button>
+                        <button style={buttonStyles} className="btn btn-secondary" onClick={handleTakePicture}>Take Picture</button>
+                        <button style={buttonStyles} className="btn btn-danger" onClick={handleClosePopup}>Close</button>
+                    </div>
+                </div>
+            )}
 
         </div>
     );

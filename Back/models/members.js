@@ -64,7 +64,10 @@ const memberSchema = new mongoose.Schema({
 },
     bloodGroup: {
     type: String
-}
+},
+    image:{
+        type: String // field to store the image path
+    }
 
 })
 
