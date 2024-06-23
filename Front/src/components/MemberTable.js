@@ -14,7 +14,7 @@ function MemberTable() {
 
   const fetchMemberData = async () => {
     try {
-      const response = await axios.get('http://localhost:3005/members');
+      const response = await axios.get('http://localhost:3005/member');
       setMemberData(response.data);
     } catch (error) {
       console.error('Error fetching member data:', error);
@@ -31,7 +31,7 @@ function MemberTable() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3005/members/${id}`);
+      await axios.delete(`http://localhost:3005/member/${id}`);
       fetchMemberData(); // Refresh the data after deletion
     } catch (error) {
       console.error('Error deleting member:', error);

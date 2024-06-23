@@ -33,9 +33,9 @@ router.post('/', upload.single('image'), async (req, res) => {
 });
 
 // Add this route to get the total number of staff entries
-router.get('/staff/count', async (req, res) => {
+router.get('/count', async (req, res) => {
     try {
-        const count = await Staff.countDocuments();
+        const count = await staff.countDocuments();
         res.json({ count });
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while fetching staff count' });

@@ -10,7 +10,7 @@ function MemberView() {
 
     const fetchMemberDetails = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:3005/members/${id}`);
+            const response = await axios.get(`http://localhost:3005/member/${id}`);
             console.log('API Response:', response.data); // Log the API response
             setMemberDetails(response.data);
             setLoading(false);

@@ -37,7 +37,7 @@ function MemberForm() {
     
       const fetchMemberDetails = async () => {
         try {
-          const response = await axios.get(`http://localhost:3005/members/${id}`);
+          const response = await axios.get(`http://localhost:3005/member/${id}`);
           setFormData(response.data);
         } catch (error) {
           console.error('Error fetching member details:', error);
@@ -78,8 +78,8 @@ function MemberForm() {
           }
     
           const response = id
-        ? await axios.put(`http://localhost:3005/members/${id}`, data)
-        : await axios.post('http://localhost:3005/members', data);
+        ? await axios.put(`http://localhost:3005/member/${id}`, data)
+        : await axios.post('http://localhost:3005/member', data);
 
     
         if (response.status === 200) {
